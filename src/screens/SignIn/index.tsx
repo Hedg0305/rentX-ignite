@@ -16,6 +16,7 @@ import { InputPassword } from '../../components/InputPassword'
 
 import { Container, Header, Form, SubTitle, Title, Footer } from './styles'
 import { useNavigation } from '@react-navigation/core'
+import { useAuth } from '../../hooks/auth'
 
 interface NavigationProps {
   navigate: (screens?: string) => void
@@ -26,6 +27,8 @@ export function SignIn() {
   const [password, setPassword] = useState('')
 
   const navigation = useNavigation<NavigationProps>()
+
+  const { signIn } = useAuth()
 
   const theme = useTheme()
 
@@ -39,6 +42,8 @@ export function SignIn() {
       })
 
       await schema.validate({ email, password })
+
+      signIn({ email, password })
     } catch (error) {
       console.log(error)
       if (error instanceof Yup.ValidationError) {

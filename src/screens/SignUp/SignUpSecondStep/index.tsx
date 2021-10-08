@@ -11,6 +11,7 @@ import { BackButton } from '../../../components/BackButton/inde'
 import { Bullet } from '../../../components/Bullet'
 import { Buttom } from '../../../components/Buttom'
 import { InputPassword } from '../../../components/InputPassword'
+import api from '../../../services/api'
 
 import {
   Container,
@@ -47,7 +48,7 @@ export function SignUpSecondStep() {
 
   const handleBack = () => navigation.goBack()
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!password || !confirmPassword) {
       return Alert.alert('Informe a senha e confirme')
     }
@@ -55,13 +56,23 @@ export function SignUpSecondStep() {
       return Alert.alert('As senhas não são iguais')
     }
 
-    const props = {}
-
-    navigation.navigate('Confirmation', {
-      nextSrceenRoute: 'SignIn',
-      title: 'Conta criada!',
-      message: `Agora é só fazer login\ne aproveitar`,
-    })
+    await api
+      .post('/users', {
+        name: user.name,
+        email: user.email,
+        driver_license: user.driverLicense,
+        password,
+      })
+      .then(() => {
+        navigation.navigate('Confirmation', {
+          nextSrceenRoute: 'SignIn',
+          title: 'Conta criada!',
+          message: `Agora é só fazer login\ne aproveitar`,
+        })
+      })
+      .catch(() => {
+        Alert.alert('Opa', 'Não foi possível cadastrar')
+      })
   }
 
   return (
