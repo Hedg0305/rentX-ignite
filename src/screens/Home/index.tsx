@@ -87,7 +87,7 @@ export function Home() {
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => true)
-  })
+  }, [])
 
   return (
     <Container>

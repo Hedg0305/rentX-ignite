@@ -43,7 +43,7 @@ import api from '../../services/api'
 import { Alert } from 'react-native'
 
 type NavigationProps = {
-  navigate: (screen: string) => void
+  navigate: (screen: string, props: {}) => void
   goBack: () => void
 }
 
@@ -67,7 +67,7 @@ export function SchedulingDetails() {
   const route = useRoute()
   const { car, dates } = route.params as Params
 
-  const rentTotal = Number(dates.length * car.rent.price)
+  const rentTotal = Number(dates.length * Number(car.rent.price))
 
   const navigation = useNavigation<NavigationProps>()
 
@@ -96,13 +96,17 @@ export function SchedulingDetails() {
         id: car.id,
         unavailable_dates,
       })
-      .then(() => navigation.navigate('SchedulingComplete'))
+      .then(() =>
+        navigation.navigate('Confirmation', {
+          nextSrceenRoute: 'Home',
+          title: 'Carro alugado!',
+          message: `Agora é só ir\naté a concessionária da rentX\npegar o seu automóvel`,
+        })
+      )
       .catch(() => {
         setLoading(false)
         Alert.alert('Não foi possível confirmar o agendamento')
       })
-
-    navigation.navigate('SchedulingComplete')
   }
 
   const handleBack = () => {

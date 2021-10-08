@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 
 import LogoSvg from '../../assets/logo_background_gray.svg'
 import DoneSvg from '../../assets/done.svg'
@@ -7,18 +7,27 @@ import { ConfirmButton } from '../../components/ConfirmButton'
 
 import { Container, Content, Title, Message, Footer } from './styles'
 import { StatusBar, useWindowDimensions } from 'react-native'
+import { About } from '../../components/Car/styles'
 
 type NavigationProps = {
   navigate: (screen: string) => void
 }
 
-export function SchedulingComplete() {
+interface Props {
+  title: string
+  message: string
+  nextSrceenRoute: string
+}
+
+export function Confirmation() {
   const { width } = useWindowDimensions()
 
   const navigation = useNavigation<NavigationProps>()
+  const route = useRoute()
+  const { message, nextSrceenRoute, title } = route.params as Props
 
   const handleConfirmRental = () => {
-    navigation.navigate('Home')
+    navigation.navigate(nextSrceenRoute)
   }
 
   return (
@@ -31,13 +40,9 @@ export function SchedulingComplete() {
       <LogoSvg width={width} />
       <Content>
         <DoneSvg width={80} height={80} />
-        <Title>Carro alugado!</Title>
+        <Title>{title}</Title>
 
-        <Message>
-          Agora você só precisa ir {'\n'}
-          até a concessionária da RentX {'\n'}
-          pegar o seu automóvel!
-        </Message>
+        <Message>{message}</Message>
       </Content>
 
       <Footer>
