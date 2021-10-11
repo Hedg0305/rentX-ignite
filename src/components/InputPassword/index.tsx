@@ -38,9 +38,10 @@ export function InputPassword({ iconName, value, ...rest }: InputProps) {
       <InputText
         onFocus={handleInputFocused}
         onBlur={handleInputBlur}
-        {...rest}
+        autoCorrect={false}
         secureTextEntry={isPasswordVisible}
         isFocused={isFocused}
+        {...rest}
       />
 
       <BorderlessButton onPress={handlePasswordVisibility}>

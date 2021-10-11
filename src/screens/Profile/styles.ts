@@ -6,14 +6,12 @@ import {
 } from 'react-native-gesture-handler'
 import { getStatusBarHeight } from 'react-native-iphone-x-helper'
 import { RFValue } from 'react-native-responsive-fontsize'
-import { TouchableOpacityProps } from 'react-native'
 
 interface OptionProps extends RectButtonProps {
   active: boolean
 }
 
 export const Container = styled.View`
-  flex: 1;
   background-color: ${({ theme }) => theme.colors.background_primary};
 `
 export const Header = styled.View`
@@ -72,7 +70,6 @@ export const PhotoButton = styled(RectButton)`
 `
 
 export const Content = styled.View`
-  flex: 1;
   padding: 0 24px;
   margin-top: 122px;
 `
@@ -104,3 +101,4 @@ export const OptionTitle = styled.Text<OptionProps>`
   color: ${({ theme, active }) =>
     active ? theme.colors.header : theme.colors.text_details};
 `
+export const Section = styled.View``
