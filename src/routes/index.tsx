@@ -9,7 +9,7 @@ const Routes = () => {
 
   return (
     <NavigationContainer>
-      {user ? <AppTabRouts /> : <AuthRoutes />}
+      {user.token ? <AppTabRouts /> : <AuthRoutes />}
     </NavigationContainer>
   )
 }
