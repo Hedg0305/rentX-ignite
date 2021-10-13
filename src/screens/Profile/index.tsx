@@ -20,7 +20,7 @@ import {
   Section,
 } from './styles'
 import { Input } from '../../components/Input'
-import { Keyboard, KeyboardAvoidingView } from 'react-native'
+import { Alert, Keyboard, KeyboardAvoidingView } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { InputPassword } from '../../components/InputPassword'
@@ -28,10 +28,12 @@ import { useAuth } from '../../hooks/auth'
 
 import * as ImagePicker from 'expo-image-picker'
 import { ImageInfo } from 'expo-image-picker/build/ImagePicker.types'
+import { Buttom } from '../../components/Buttom'
+import * as Yup from 'yup'
 
 export function Profile() {
   const [option, setOption] = useState<'dataEdit' | 'passwordEdit'>('dataEdit')
-  const { user } = useAuth()
+  const { user, signOut, updateUser } = useAuth()
   const [avatar, setAvatar] = useState(user.avatar)
   const [name, setName] = useState(user.name)
   const [driverLicense, setDriverLicense] = useState(user.driver_license)
@@ -40,10 +42,6 @@ export function Profile() {
   const navigation = useNavigation()
 
   const handleBack = () => {
-    navigation.goBack()
-  }
-
-  const handleSignOut = () => {
     navigation.goBack()
   }
 
@@ -67,6 +65,57 @@ export function Profile() {
     }
   }
 
+  const handleProfileUpdate = async () => {
+    try {
+      const schema = Yup.object()
+        .shape({
+          driverLicense: Yup.string().required('CNH é obrigatória'),
+          name: Yup.string().required('Nome é obrigatório'),
+        })
+        .required()
+
+      const data = { name, driverLicense }
+      await schema.validate(data)
+
+      await updateUser({
+        id: user.id,
+        user_id: user.user_id,
+        email: user.email,
+        name,
+        driver_license: driverLicense,
+        avatar,
+        token: user.token,
+      })
+
+      Alert.alert('Perfil atualizado')
+    } catch (error) {
+      console.log(error)
+
+      if (error instanceof Yup.ValidationError) {
+        Alert.alert('Opa!', error.message)
+      }
+      Alert.alert('Não foi possível atualizar o perfil')
+    }
+  }
+
+  const handleSignOut = () => {
+    Alert.alert(
+      'Tem certeza?',
+      'Se você sair, irá precisar de internet para conectar-se novamente!',
+      [
+        {
+          text: 'Cancelar',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'Confirmar',
+          onPress: () => signOut(),
+        },
+      ]
+    )
+  }
+
   return (
     <KeyboardAvoidingView behavior='position' enabled>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -74,7 +123,7 @@ export function Profile() {
           <Header>
             <HeaderTop>
               <BackButton color={theme.colors.shape} onPress={handleBack} />
-              <HeaderTitle>Editar pergil</HeaderTitle>
+              <HeaderTitle>Editar perfil</HeaderTitle>
               <LogoutButton onPress={handleSignOut}>
                 <Feather name='power' size={24} color={theme.colors.shape} />
               </LogoutButton>
@@ -147,6 +196,7 @@ export function Profile() {
                 <InputPassword iconName='lock' placeholder='Repetir senha' />
               </Section>
             )}
+            <Buttom title='Salvar alterações' onPress={handleProfileUpdate} />
           </Content>
         </Container>
       </TouchableWithoutFeedback>
